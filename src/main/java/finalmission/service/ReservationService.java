@@ -5,9 +5,11 @@ import finalmission.domain.LoginMember;
 import finalmission.domain.Member;
 import finalmission.domain.Reservation;
 import finalmission.dto.request.CreateReservationRequest;
+import finalmission.dto.request.UpdateReservationRequest;
 import finalmission.dto.response.CreateReservationResponse;
 import finalmission.dto.response.ReadReservationResponse;
 import finalmission.dto.response.ReservationByMemberResponse;
+import finalmission.dto.response.UpdateReservationResponse;
 import finalmission.error.BadRequestException;
 import finalmission.error.NotFoundException;
 import finalmission.repository.ConferenceRoomRepository;
@@ -51,10 +53,30 @@ public class ReservationService {
                 .toList();
     }
 
+    public UpdateReservationResponse updateByMember(UpdateReservationRequest request, LoginMember loginMember) {
+        Reservation reservation = getReservationById(request.id());
+        ConferenceRoom conferenceRoom = getConferenceRoomById(request.conferenceRoomId());
+        Member member = getMemberById(loginMember.id());
+        validateByMember(reservation, member);
+        reservation.update(request.date(), request.time(), conferenceRoom);
+        return UpdateReservationResponse.from(reservation);
+    }
+
+    private void validateByMember(Reservation reservation, Member member) {
+        if (!reservation.isMine(member)) {
+            throw new BadRequestException("본인 예약만 수정 / 삭제 가능합니다.");
+        }
+    }
+
     private void validateAlreadyReserved(CreateReservationRequest request, ConferenceRoom conferenceRoom) {
         if (reservationRepository.existsByDateAndTimeAndConferenceRoom(request.date(), request.time(), conferenceRoom)) {
             throw new BadRequestException("예약이 이미 존재합니다.");
         }
+    }
+
+    private Reservation getReservationById(Long reservationId) {
+        return reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new NotFoundException("예약을 찾을 수 없습니다."));
     }
 
     private ConferenceRoom getConferenceRoomById(Long conferenceRoomId) {

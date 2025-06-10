@@ -14,15 +14,19 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
+import finalmission.domain.Member;
 import finalmission.domain.Reservation;
 import finalmission.dto.request.CreateReservationRequest;
+import finalmission.dto.request.UpdateReservationRequest;
 import finalmission.dto.response.CreateReservationResponse;
 import finalmission.dto.response.ReservationByMemberResponse;
+import finalmission.dto.response.UpdateReservationResponse;
 import finalmission.error.BadRequestException;
 import finalmission.repository.ConferenceRoomRepository;
 import finalmission.repository.MemberRepository;
 import finalmission.repository.ReservationRepository;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -127,6 +131,61 @@ public class ReservationServiceTest {
                 .allMatch(response -> Objects.equals(response.memberName(), MEMBER.getName()));
 
         assertThat(allMatchByMember).isEqualTo(true);
+    }
+
+    @DisplayName("본인의 예약을 수정한다.")
+    @Test
+    void updateByMember() {
+        // given
+        UpdateReservationRequest request = new UpdateReservationRequest(
+                1L,
+                TOMORROW.plusDays(1),
+                LocalTime.of(11, 0),
+                1L
+        );
+        Reservation reservation = new Reservation(1L, TOMORROW, DEFAULT_TIME, CONFERENCE_ROOM, MEMBER);
+
+        when(reservationRepository.findById(anyLong()))
+                .thenReturn(Optional.of(reservation));
+        when(conferenceRoomRepository.findById(anyLong()))
+                .thenReturn(Optional.of(CONFERENCE_ROOM));
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(MEMBER));
+
+        // when
+        UpdateReservationResponse response = reservationService.updateByMember(request, LOGIN_MEMBER);
+
+        // then
+        assertAll(
+                () -> assertThat(response.date()).isEqualTo(TOMORROW.plusDays(1)),
+                () -> assertThat(response.time()).isEqualTo(LocalTime.of(11, 0))
+        );
+    }
+
+    @DisplayName("본인의 예약이 아니라면, 수정할 수 없다.")
+    @Test
+    void updateByMember_WhenNotMine() {
+        // given
+        UpdateReservationRequest request = new UpdateReservationRequest(
+                1L,
+                TOMORROW.plusDays(1),
+                LocalTime.of(11, 0),
+                1L
+        );
+
+        Member other = new Member(2L, "다른 사용자", "other@email.com", "password");
+        Reservation reservation = new Reservation(1L, TOMORROW, DEFAULT_TIME, CONFERENCE_ROOM, other);
+
+        when(reservationRepository.findById(anyLong()))
+                .thenReturn(Optional.of(reservation));
+        when(conferenceRoomRepository.findById(anyLong()))
+                .thenReturn(Optional.of(CONFERENCE_ROOM));
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(MEMBER));
+
+        // when & then
+        assertThatThrownBy(() -> reservationService.updateByMember(request, LOGIN_MEMBER))
+                .isInstanceOf(BadRequestException.class);
     }
 
     private List<Reservation> createReservations() {

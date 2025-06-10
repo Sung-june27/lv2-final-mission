@@ -36,4 +36,14 @@ public class Reservation {
     public Reservation(LocalDate date, LocalTime time, ConferenceRoom conferenceRoom, Member member) {
         this(null, date, time, conferenceRoom, member);
     }
+
+    public void update(LocalDate date, LocalTime time, ConferenceRoom conferenceRoom) {
+        this.date = date;
+        this.time = time;
+        this.conferenceRoom = conferenceRoom;
+    }
+
+    public boolean isMine(Member member) {
+        return this.member.equals(member);
+    }
 }
