@@ -12,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import finalmission.domain.Member;
@@ -79,6 +80,8 @@ public class ReservationServiceTest {
                 () -> assertThat(response.conferenceRoomName()).isEqualTo(CONFERENCE_ROOM.getName()),
                 () -> assertThat(response.memberName()).isEqualTo(MEMBER.getName())
         );
+
+        verify(reservationRepository).save(any(Reservation.class));
     }
 
     @DisplayName("예약이 이미 존재한다면, 예외를 발생한다")
@@ -185,6 +188,39 @@ public class ReservationServiceTest {
 
         // when & then
         assertThatThrownBy(() -> reservationService.updateByMember(request, LOGIN_MEMBER))
+                .isInstanceOf(BadRequestException.class);
+    }
+
+    @DisplayName("본인의 예약이라면, 삭제할 수 있다.")
+    @Test
+    void deleteByMember() {
+        // given
+        when(reservationRepository.findById(anyLong()))
+                .thenReturn(Optional.of(RESERVATION));
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(MEMBER));
+
+        // when & then
+        assertThatCode(() -> reservationService.deleteByMember(1L, LOGIN_MEMBER))
+                .doesNotThrowAnyException();
+
+        verify(reservationRepository).delete(RESERVATION);
+    }
+
+    @DisplayName("본인의 예약이 아니라면, 삭제할 수 없다.")
+    @Test
+    void deleteByMember_WhenNotMine() {
+        // given
+        Member other = new Member(2L, "다른 사용자", "other@email.com", "password");
+        Reservation reservation = new Reservation(1L, TOMORROW, DEFAULT_TIME, CONFERENCE_ROOM, other);
+
+        when(reservationRepository.findById(anyLong()))
+                .thenReturn(Optional.of(reservation));
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(MEMBER));
+
+        // when & then
+        assertThatThrownBy(() -> reservationService.deleteByMember(1L, LOGIN_MEMBER))
                 .isInstanceOf(BadRequestException.class);
     }
 

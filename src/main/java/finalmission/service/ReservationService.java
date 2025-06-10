@@ -62,6 +62,13 @@ public class ReservationService {
         return UpdateReservationResponse.from(reservation);
     }
 
+    public void deleteByMember(Long reservationId, LoginMember loginMember) {
+        Reservation reservation = getReservationById(reservationId);
+        Member member = getMemberById(loginMember.id());
+        validateByMember(reservation, member);
+        reservationRepository.delete(reservation);
+    }
+
     private void validateByMember(Reservation reservation, Member member) {
         if (!reservation.isMine(member)) {
             throw new BadRequestException("본인 예약만 수정 / 삭제 가능합니다.");
