@@ -22,7 +22,7 @@ import finalmission.dto.request.UpdateReservationRequest;
 import finalmission.dto.response.CreateReservationResponse;
 import finalmission.dto.response.ReservationByMemberResponse;
 import finalmission.dto.response.UpdateReservationResponse;
-import finalmission.error.BadRequestException;
+import finalmission.global.error.BadRequestException;
 import finalmission.repository.ConferenceRoomRepository;
 import finalmission.repository.MemberRepository;
 import finalmission.repository.ReservationRepository;
