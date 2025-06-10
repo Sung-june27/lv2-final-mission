@@ -6,6 +6,7 @@ import finalmission.domain.Member;
 import finalmission.domain.Reservation;
 import finalmission.dto.request.CreateReservationRequest;
 import finalmission.dto.response.CreateReservationResponse;
+import finalmission.error.BadRequestException;
 import finalmission.error.NotFoundException;
 import finalmission.repository.ConferenceRoomRepository;
 import finalmission.repository.MemberRepository;
@@ -24,10 +25,19 @@ public class ReservationService {
     public CreateReservationResponse create(CreateReservationRequest request, LoginMember loginMember) {
         ConferenceRoom conferenceRoom = getConferenceRoomById(request.conferenceRoomId());
         Member member = getMemberById(loginMember.id());
+
+        validateAlreadyReserved(request, conferenceRoom);
+
         Reservation reservation = request.toReservation(conferenceRoom, member);
         Reservation saved = reservationRepository.save(reservation);
-        
+
         return CreateReservationResponse.from(saved);
+    }
+
+    private void validateAlreadyReserved(CreateReservationRequest request, ConferenceRoom conferenceRoom) {
+        if (reservationRepository.existsByDateAndTimeAndConferenceRoom(request.date(), request.time(), conferenceRoom)) {
+            throw new BadRequestException("예약이 이미 존재합니다.");
+        }
     }
 
     private ConferenceRoom getConferenceRoomById(Long conferenceRoomId) {

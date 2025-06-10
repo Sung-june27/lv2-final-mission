@@ -7,6 +7,7 @@ import static finalmission.TestFixture.MEMBER;
 import static finalmission.TestFixture.RESERVATION;
 import static finalmission.TestFixture.TOMORROW;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -14,6 +15,7 @@ import static org.mockito.Mockito.when;
 
 import finalmission.domain.Reservation;
 import finalmission.dto.request.CreateReservationRequest;
+import finalmission.error.BadRequestException;
 import finalmission.repository.ConferenceRoomRepository;
 import finalmission.repository.MemberRepository;
 import finalmission.repository.ReservationRepository;
@@ -73,10 +75,20 @@ public class ReservationServiceTest {
     @Test
     void create_WhenExistsReservation() {
         // given
+        CreateReservationRequest request = new CreateReservationRequest(
+                TOMORROW,
+                DEFAULT_TIME,
+                1L
+        );
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(MEMBER));
+        when(conferenceRoomRepository.findById(anyLong()))
+                .thenReturn(Optional.of(CONFERENCE_ROOM));
+        when(reservationRepository.existsByDateAndTimeAndConferenceRoom(any(), any(), any()))
+                .thenReturn(true);
 
-
-        // when
-
-        // then
+        // when & then
+        assertThatThrownBy(() -> reservationService.create(request, LOGIN_MEMBER))
+                .isInstanceOf(BadRequestException.class);
     }
 }
