@@ -1,4 +1,4 @@
-package finalmission;
+package finalmission.service;
 
 import static finalmission.TestFixture.CONFERENCE_ROOM;
 import static finalmission.TestFixture.DEFAULT_TIME;
@@ -7,6 +7,7 @@ import static finalmission.TestFixture.MEMBER;
 import static finalmission.TestFixture.RESERVATION;
 import static finalmission.TestFixture.TOMORROW;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
@@ -21,7 +22,6 @@ import finalmission.error.BadRequestException;
 import finalmission.repository.ConferenceRoomRepository;
 import finalmission.repository.MemberRepository;
 import finalmission.repository.ReservationRepository;
-import finalmission.service.ReservationService;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -98,11 +98,24 @@ public class ReservationServiceTest {
                 .isInstanceOf(BadRequestException.class);
     }
 
+    @DisplayName("모든 예약 정보를 가져온다.")
+    @Test
+    void findAll() {
+        // given
+        List<Reservation> reservations = createReservations();
+        when(reservationRepository.findAll())
+                .thenReturn(reservations);
+
+        // when & then
+        assertThatCode(() -> reservationService.findALl())
+                .doesNotThrowAnyException();
+    }
+
     @DisplayName("사용자는 본인의 예약 목록만 조회할 수 있다.")
     @Test
     void findAllByMember() {
         // given
-        List<Reservation> reservations = createMemberReservations();
+        List<Reservation> reservations = createReservations();
         when(reservationRepository.findAllByMemberId(anyLong()))
                 .thenReturn(reservations);
 
@@ -112,11 +125,11 @@ public class ReservationServiceTest {
         // then
         boolean allMatchByMember = responses.stream()
                 .allMatch(response -> Objects.equals(response.memberName(), MEMBER.getName()));
-        assertThat(allMatchByMember).isEqualTo(true);
 
+        assertThat(allMatchByMember).isEqualTo(true);
     }
 
-    private List<Reservation> createMemberReservations() {
+    private List<Reservation> createReservations() {
         List<Reservation> reservations = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             LocalDate date = LocalDate.now().plusDays(i);

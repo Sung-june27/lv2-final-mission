@@ -6,6 +6,7 @@ import finalmission.domain.Member;
 import finalmission.domain.Reservation;
 import finalmission.dto.request.CreateReservationRequest;
 import finalmission.dto.response.CreateReservationResponse;
+import finalmission.dto.response.ReadReservationResponse;
 import finalmission.dto.response.ReservationByMemberResponse;
 import finalmission.error.BadRequestException;
 import finalmission.error.NotFoundException;
@@ -36,6 +37,20 @@ public class ReservationService {
         return CreateReservationResponse.from(saved);
     }
 
+    public List<ReadReservationResponse> findALl() {
+        List<Reservation> reservations = reservationRepository.findAll();
+        return reservations.stream()
+                .map(ReadReservationResponse::from)
+                .toList();
+    }
+
+    public List<ReservationByMemberResponse> findAllByMember(LoginMember loginMember) {
+        List<Reservation> reservations = reservationRepository.findAllByMemberId(loginMember.id());
+        return reservations.stream()
+                .map(ReservationByMemberResponse::from)
+                .toList();
+    }
+
     private void validateAlreadyReserved(CreateReservationRequest request, ConferenceRoom conferenceRoom) {
         if (reservationRepository.existsByDateAndTimeAndConferenceRoom(request.date(), request.time(), conferenceRoom)) {
             throw new BadRequestException("예약이 이미 존재합니다.");
@@ -50,12 +65,5 @@ public class ReservationService {
     private Member getMemberById(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException("멤버를 찾을 수 없습니다."));
-    }
-
-    public List<ReservationByMemberResponse> findAllByMember(LoginMember loginMember) {
-        List<Reservation> reservations = reservationRepository.findAllByMemberId(loginMember.id());
-        return reservations.stream()
-                .map(ReservationByMemberResponse::from)
-                .toList();
     }
 }
