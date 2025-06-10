@@ -6,11 +6,13 @@ import finalmission.domain.Member;
 import finalmission.domain.Reservation;
 import finalmission.dto.request.CreateReservationRequest;
 import finalmission.dto.response.CreateReservationResponse;
+import finalmission.dto.response.ReservationByMemberResponse;
 import finalmission.error.BadRequestException;
 import finalmission.error.NotFoundException;
 import finalmission.repository.ConferenceRoomRepository;
 import finalmission.repository.MemberRepository;
 import finalmission.repository.ReservationRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -48,5 +50,12 @@ public class ReservationService {
     private Member getMemberById(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException("멤버를 찾을 수 없습니다."));
+    }
+
+    public List<ReservationByMemberResponse> findAllByMember(LoginMember loginMember) {
+        List<Reservation> reservations = reservationRepository.findAllByMemberId(loginMember.id());
+        return reservations.stream()
+                .map(ReservationByMemberResponse::from)
+                .toList();
     }
 }

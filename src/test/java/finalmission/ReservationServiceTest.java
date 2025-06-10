@@ -15,11 +15,17 @@ import static org.mockito.Mockito.when;
 
 import finalmission.domain.Reservation;
 import finalmission.dto.request.CreateReservationRequest;
+import finalmission.dto.response.CreateReservationResponse;
+import finalmission.dto.response.ReservationByMemberResponse;
 import finalmission.error.BadRequestException;
 import finalmission.repository.ConferenceRoomRepository;
 import finalmission.repository.MemberRepository;
 import finalmission.repository.ReservationRepository;
 import finalmission.service.ReservationService;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -60,7 +66,7 @@ public class ReservationServiceTest {
                 .thenReturn(RESERVATION);
 
         // when
-        final var response = reservationService.create(request, LOGIN_MEMBER);
+        CreateReservationResponse response = reservationService.create(request, LOGIN_MEMBER);
 
         // then
         assertAll(
@@ -90,5 +96,33 @@ public class ReservationServiceTest {
         // when & then
         assertThatThrownBy(() -> reservationService.create(request, LOGIN_MEMBER))
                 .isInstanceOf(BadRequestException.class);
+    }
+
+    @DisplayName("사용자는 본인의 예약 목록만 조회할 수 있다.")
+    @Test
+    void findAllByMember() {
+        // given
+        List<Reservation> reservations = createMemberReservations();
+        when(reservationRepository.findAllByMemberId(anyLong()))
+                .thenReturn(reservations);
+
+        // when
+        List<ReservationByMemberResponse> responses = reservationService.findAllByMember(LOGIN_MEMBER);
+
+        // then
+        boolean allMatchByMember = responses.stream()
+                .allMatch(response -> Objects.equals(response.memberName(), MEMBER.getName()));
+        assertThat(allMatchByMember).isEqualTo(true);
+
+    }
+
+    private List<Reservation> createMemberReservations() {
+        List<Reservation> reservations = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            LocalDate date = LocalDate.now().plusDays(i);
+            Reservation reservation = new Reservation((long) i, date, DEFAULT_TIME, CONFERENCE_ROOM, MEMBER);
+            reservations.add(reservation);
+        }
+        return reservations;
     }
 }
