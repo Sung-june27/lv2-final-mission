@@ -30,4 +30,8 @@ public class Member {
     public Member(String name, String email, String password) {
         this(null, name, email, password);
     }
+
+    public boolean matchesPassword(String password) {
+        return this.password.equals(password);
+    }
 }
