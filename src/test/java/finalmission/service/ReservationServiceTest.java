@@ -105,6 +105,25 @@ public class ReservationServiceTest {
                 .isInstanceOf(BadRequestException.class);
     }
 
+    @DisplayName("과거로 예약을 시도한다면, 예외를 던진다.")
+    @Test
+    void create_WhenPastDateTime() {
+        // given
+        CreateReservationRequest request = new CreateReservationRequest(
+                LocalDate.now().minusDays(1),
+                DEFAULT_TIME,
+                1L
+        );
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(MEMBER));
+        when(conferenceRoomRepository.findById(anyLong()))
+                .thenReturn(Optional.of(CONFERENCE_ROOM));
+
+        // when & then
+        assertThatThrownBy(() -> reservationService.create(request, LOGIN_MEMBER))
+                .isInstanceOf(BadRequestException.class);
+    }
+
     @DisplayName("모든 예약 정보를 가져온다.")
     @Test
     void findAll() {

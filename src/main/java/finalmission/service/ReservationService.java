@@ -15,6 +15,9 @@ import finalmission.error.NotFoundException;
 import finalmission.repository.ConferenceRoomRepository;
 import finalmission.repository.MemberRepository;
 import finalmission.repository.ReservationRepository;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,6 +34,7 @@ public class ReservationService {
         ConferenceRoom conferenceRoom = getConferenceRoomById(request.conferenceRoomId());
         Member member = getMemberById(loginMember.id());
 
+        validatePastDateTime(request.date(), request.time());
         validateAlreadyReserved(request, conferenceRoom);
 
         Reservation reservation = request.toReservation(conferenceRoom, member);
@@ -75,8 +79,18 @@ public class ReservationService {
         }
     }
 
+    private void validatePastDateTime(LocalDate date, LocalTime time) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime dateTime = LocalDateTime.of(date, time);
+        if (dateTime.isBefore(now)) {
+            throw new BadRequestException("과거 날짜/시간으로는 불가능합니다.");
+        }
+    }
+
     private void validateAlreadyReserved(CreateReservationRequest request, ConferenceRoom conferenceRoom) {
-        if (reservationRepository.existsByDateAndTimeAndConferenceRoom(request.date(), request.time(), conferenceRoom)) {
+        boolean alreadyReserved = reservationRepository.existsByDateAndTimeAndConferenceRoom(
+                request.date(), request.time(), conferenceRoom);
+        if (alreadyReserved) {
             throw new BadRequestException("예약이 이미 존재합니다.");
         }
     }
