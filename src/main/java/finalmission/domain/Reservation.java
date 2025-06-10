@@ -8,8 +8,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Getter
 public class Reservation {
 
     @Id
@@ -21,42 +28,12 @@ public class Reservation {
     private LocalTime time;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Member member;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     private ConferenceRoom conferenceRoom;
 
-    protected Reservation() {}
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member member;
 
-    public Reservation(LocalDate date, LocalTime time, Member member, ConferenceRoom conferenceRoom) {
-        this(null, date, time, member, conferenceRoom);
-    }
-
-    public Reservation(Long id, LocalDate date, LocalTime time, Member member, ConferenceRoom conferenceRoom) {
-        this.id = id;
-        this.date = date;
-        this.time = time;
-        this.member = member;
-        this.conferenceRoom = conferenceRoom;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public LocalTime getTime() {
-        return time;
-    }
-
-    public Member getMember() {
-        return member;
-    }
-
-    public ConferenceRoom getConferenceRoom() {
-        return conferenceRoom;
+    public Reservation(LocalDate date, LocalTime time, ConferenceRoom conferenceRoom, Member member) {
+        this(null, date, time, conferenceRoom, member);
     }
 }
