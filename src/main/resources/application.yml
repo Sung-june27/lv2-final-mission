@@ -22,3 +22,7 @@ security:
     token:
       secret-key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIiLCJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjJ9.ih1aovtQShabQ7l0cINw4k1fagApg3qLWiB8Kt59Lno
       expire-length: 3600000
+
+holiday:
+  service-key: dLpMvhdh/a6SmnIhCrNFqY/M4DDk7Jod5V69/K2YrIjQAy1XbcNW9fxulzegnEFI3Yoa1S0J/wK81KJrAA9Uyg==
+  base-url: 'http://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo'
