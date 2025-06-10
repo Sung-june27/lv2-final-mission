@@ -22,6 +22,7 @@ import finalmission.dto.request.UpdateReservationRequest;
 import finalmission.dto.response.CreateReservationResponse;
 import finalmission.dto.response.ReservationByMemberResponse;
 import finalmission.dto.response.UpdateReservationResponse;
+import finalmission.external.HolidayService;
 import finalmission.global.error.BadRequestException;
 import finalmission.repository.ConferenceRoomRepository;
 import finalmission.repository.MemberRepository;
@@ -40,10 +41,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class ReservationServiceTest {
+class ReservationServiceTest {
 
     @InjectMocks
     private ReservationService reservationService;
+
+    @Mock
+    private HolidayService holidayService;
 
     @Mock
     private ReservationRepository reservationRepository;
@@ -101,6 +105,26 @@ public class ReservationServiceTest {
                 .thenReturn(true);
 
         // when & then
+        assertThatThrownBy(() -> reservationService.create(request, LOGIN_MEMBER))
+                .isInstanceOf(BadRequestException.class);
+    }
+
+    @DisplayName("공휴일에는 예약을 할 수 없다.")
+    @Test
+    void create_WhenHoliday() {
+        // given
+        CreateReservationRequest request = new CreateReservationRequest(
+                LocalDate.of(2020, 6, 6),
+                DEFAULT_TIME,
+                1L
+        );
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(MEMBER));
+        when(conferenceRoomRepository.findById(anyLong()))
+                .thenReturn(Optional.of(CONFERENCE_ROOM));
+        when(holidayService.isHoliday(any()))
+                .thenReturn(true);
+
         assertThatThrownBy(() -> reservationService.create(request, LOGIN_MEMBER))
                 .isInstanceOf(BadRequestException.class);
     }
@@ -204,6 +228,32 @@ public class ReservationServiceTest {
                 .thenReturn(Optional.of(CONFERENCE_ROOM));
         when(memberRepository.findById(anyLong()))
                 .thenReturn(Optional.of(MEMBER));
+
+        // when & then
+        assertThatThrownBy(() -> reservationService.updateByMember(request, LOGIN_MEMBER))
+                .isInstanceOf(BadRequestException.class);
+    }
+
+    @DisplayName("공휴일에는 수정할 수 없다.")
+    @Test
+    void updateByMember_WhenHoliday() {
+        // given
+        UpdateReservationRequest request = new UpdateReservationRequest(
+                1L,
+                LocalDate.of(2020, 6, 6),
+                LocalTime.of(11, 0),
+                1L
+        );
+        Reservation reservation = new Reservation(1L, TOMORROW, DEFAULT_TIME, CONFERENCE_ROOM, MEMBER);
+
+        when(reservationRepository.findById(anyLong()))
+                .thenReturn(Optional.of(reservation));
+        when(conferenceRoomRepository.findById(anyLong()))
+                .thenReturn(Optional.of(CONFERENCE_ROOM));
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(MEMBER));
+        when(holidayService.isHoliday(any()))
+                .thenReturn(true);
 
         // when & then
         assertThatThrownBy(() -> reservationService.updateByMember(request, LOGIN_MEMBER))

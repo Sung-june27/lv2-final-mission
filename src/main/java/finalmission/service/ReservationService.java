@@ -10,6 +10,7 @@ import finalmission.dto.response.CreateReservationResponse;
 import finalmission.dto.response.ReadReservationResponse;
 import finalmission.dto.response.ReservationByMemberResponse;
 import finalmission.dto.response.UpdateReservationResponse;
+import finalmission.external.HolidayService;
 import finalmission.global.error.BadRequestException;
 import finalmission.global.error.NotFoundException;
 import finalmission.repository.ConferenceRoomRepository;
@@ -26,6 +27,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ReservationService {
 
+    private final HolidayService holidayService;
+
     private final ReservationRepository reservationRepository;
     private final ConferenceRoomRepository conferenceRoomRepository;
     private final MemberRepository memberRepository;
@@ -34,6 +37,7 @@ public class ReservationService {
         ConferenceRoom conferenceRoom = getConferenceRoomById(request.conferenceRoomId());
         Member member = getMemberById(loginMember.id());
 
+        validateHoliday(request.date());
         validatePastDateTime(request.date(), request.time());
         validateAlreadyReserved(request, conferenceRoom);
 
@@ -61,7 +65,10 @@ public class ReservationService {
         Reservation reservation = getReservationById(request.id());
         ConferenceRoom conferenceRoom = getConferenceRoomById(request.conferenceRoomId());
         Member member = getMemberById(loginMember.id());
+
+        validateHoliday(request.date());
         validateByMember(reservation, member);
+
         reservation.update(request.date(), request.time(), conferenceRoom);
         return UpdateReservationResponse.from(reservation);
     }
@@ -76,6 +83,12 @@ public class ReservationService {
     private void validateByMember(Reservation reservation, Member member) {
         if (!reservation.isMine(member)) {
             throw new BadRequestException("본인 예약만 수정 / 삭제 가능합니다.");
+        }
+    }
+
+    private void validateHoliday(LocalDate date) {
+        if (holidayService.isHoliday(date)) {
+            throw new BadRequestException("공휴일에는 예약이 불가능합니다.");
         }
     }
 

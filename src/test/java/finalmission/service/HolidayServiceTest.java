@@ -1,4 +1,4 @@
-package finalmission;
+package finalmission.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class HolidayClientTest {
+class HolidayServiceTest {
 
     @Autowired
     private HolidayService holidayService;
