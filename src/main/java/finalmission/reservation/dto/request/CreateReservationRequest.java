@@ -1,8 +1,8 @@
-package finalmission.dto.request;
+package finalmission.reservation.dto.request;
 
-import finalmission.domain.ConferenceRoom;
-import finalmission.domain.Member;
-import finalmission.domain.Reservation;
+import finalmission.member.domain.Member;
+import finalmission.reservation.domain.Reservation;
+import finalmission.room.domain.ConferenceRoom;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalTime;

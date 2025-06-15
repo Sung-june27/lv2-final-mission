@@ -1,5 +1,7 @@
-package finalmission.domain;
+package finalmission.reservation.domain;
 
+import finalmission.member.domain.Member;
+import finalmission.room.domain.ConferenceRoom;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;

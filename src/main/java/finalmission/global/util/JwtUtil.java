@@ -1,6 +1,6 @@
 package finalmission.global.util;
 
-import finalmission.domain.LoginMember;
+import finalmission.member.domain.LoginMember;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

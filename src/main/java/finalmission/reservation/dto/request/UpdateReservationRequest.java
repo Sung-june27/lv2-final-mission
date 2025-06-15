@@ -1,4 +1,4 @@
-package finalmission.dto.request;
+package finalmission.reservation.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;

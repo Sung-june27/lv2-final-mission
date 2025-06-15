@@ -1,13 +1,13 @@
-package finalmission.controller;
+package finalmission.reservation.controller;
 
-import finalmission.domain.LoginMember;
-import finalmission.dto.request.CreateReservationRequest;
-import finalmission.dto.request.UpdateReservationRequest;
-import finalmission.dto.response.CreateReservationResponse;
-import finalmission.dto.response.ReadReservationResponse;
-import finalmission.dto.response.ReservationByMemberResponse;
-import finalmission.dto.response.UpdateReservationResponse;
-import finalmission.service.ReservationService;
+import finalmission.member.domain.LoginMember;
+import finalmission.reservation.dto.request.CreateReservationRequest;
+import finalmission.reservation.dto.request.UpdateReservationRequest;
+import finalmission.reservation.dto.response.CreateReservationResponse;
+import finalmission.reservation.dto.response.ReadReservationResponse;
+import finalmission.reservation.dto.response.ReservationByMemberResponse;
+import finalmission.reservation.dto.response.UpdateReservationResponse;
+import finalmission.reservation.service.ReservationService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

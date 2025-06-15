@@ -1,9 +1,9 @@
 package finalmission.global.config;
 
-import finalmission.domain.LoginMember;
 import finalmission.global.error.UnauthorizedException;
 import finalmission.global.util.CookieUtil;
 import finalmission.global.util.JwtUtil;
+import finalmission.member.domain.LoginMember;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;

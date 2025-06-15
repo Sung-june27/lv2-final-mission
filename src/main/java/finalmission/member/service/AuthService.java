@@ -1,11 +1,11 @@
-package finalmission.service;
+package finalmission.member.service;
 
-import finalmission.domain.LoginMember;
-import finalmission.domain.Member;
-import finalmission.dto.request.LoginRequest;
 import finalmission.global.error.BadRequestException;
 import finalmission.global.util.JwtUtil;
-import finalmission.repository.MemberRepository;
+import finalmission.member.domain.LoginMember;
+import finalmission.member.domain.Member;
+import finalmission.member.dto.request.LoginRequest;
+import finalmission.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

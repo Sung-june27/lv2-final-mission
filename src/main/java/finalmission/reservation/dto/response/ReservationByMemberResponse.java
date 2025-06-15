@@ -1,10 +1,10 @@
-package finalmission.dto.response;
+package finalmission.reservation.dto.response;
 
-import finalmission.domain.Reservation;
+import finalmission.reservation.domain.Reservation;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public record UpdateReservationResponse(
+public record ReservationByMemberResponse(
         Long id,
         LocalDate date,
         LocalTime time,
@@ -12,8 +12,8 @@ public record UpdateReservationResponse(
         String memberName
 ) {
 
-    public static UpdateReservationResponse from(Reservation reservation) {
-        return new UpdateReservationResponse(
+    public static ReservationByMemberResponse from(Reservation reservation) {
+        return new ReservationByMemberResponse(
                 reservation.getId(),
                 reservation.getDate(),
                 reservation.getTime(),

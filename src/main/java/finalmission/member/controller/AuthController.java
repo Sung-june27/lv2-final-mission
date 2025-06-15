@@ -1,8 +1,8 @@
-package finalmission.controller;
+package finalmission.member.controller;
 
-import finalmission.dto.request.LoginRequest;
 import finalmission.global.util.CookieUtil;
-import finalmission.service.AuthService;
+import finalmission.member.dto.request.LoginRequest;
+import finalmission.member.service.AuthService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

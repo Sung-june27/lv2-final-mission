@@ -1,4 +1,4 @@
-package finalmission.domain;
+package finalmission.member.domain;
 
 public record LoginMember(
         Long id,

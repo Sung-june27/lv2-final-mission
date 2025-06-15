@@ -1,4 +1,4 @@
-package finalmission.dto.request;
+package finalmission.member.dto.request;
 
 public record LoginRequest(
         String email,

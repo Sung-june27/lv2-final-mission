@@ -1,7 +1,7 @@
-package finalmission.repository;
+package finalmission.reservation.repository;
 
-import finalmission.domain.ConferenceRoom;
-import finalmission.domain.Reservation;
+import finalmission.reservation.domain.Reservation;
+import finalmission.room.domain.ConferenceRoom;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;

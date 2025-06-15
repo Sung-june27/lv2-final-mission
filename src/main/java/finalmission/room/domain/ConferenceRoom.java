@@ -1,4 +1,4 @@
-package finalmission.domain;
+package finalmission.room.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -6,7 +6,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,8 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-@EqualsAndHashCode(of = "id")
-public class Member {
+public class ConferenceRoom {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,15 +21,7 @@ public class Member {
 
     private String name;
 
-    private String email;
-
-    private String password;
-
-    public Member(String name, String email, String password) {
-        this(null, name, email, password);
-    }
-
-    public boolean matchesPassword(String password) {
-        return this.password.equals(password);
+    public ConferenceRoom(String name) {
+        this(null, name);
     }
 }

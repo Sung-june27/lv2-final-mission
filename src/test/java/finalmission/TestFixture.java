@@ -1,9 +1,9 @@
 package finalmission;
 
-import finalmission.domain.ConferenceRoom;
-import finalmission.domain.LoginMember;
-import finalmission.domain.Member;
-import finalmission.domain.Reservation;
+import finalmission.member.domain.LoginMember;
+import finalmission.member.domain.Member;
+import finalmission.reservation.domain.Reservation;
+import finalmission.room.domain.ConferenceRoom;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
