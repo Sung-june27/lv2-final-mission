@@ -34,7 +34,7 @@ public class ReservationController {
         return ResponseEntity.ok(responses);
     }
 
-    @GetMapping("/by-member")
+    @GetMapping("/mine")
     public ResponseEntity<List<ReservationByMemberResponse>> getAllReservationsByMember(
             LoginMember loginMember
     ) {
