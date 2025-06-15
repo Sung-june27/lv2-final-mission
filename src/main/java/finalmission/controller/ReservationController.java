@@ -8,6 +8,7 @@ import finalmission.dto.response.ReadReservationResponse;
 import finalmission.dto.response.ReservationByMemberResponse;
 import finalmission.dto.response.UpdateReservationResponse;
 import finalmission.service.ReservationService;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,7 @@ public class ReservationController {
     @GetMapping
     public ResponseEntity<List<ReadReservationResponse>> getAllReservations() {
         List<ReadReservationResponse> responses = reservationService.findALl();
+
         return ResponseEntity.ok(responses);
     }
 
@@ -45,7 +47,7 @@ public class ReservationController {
 
     @PostMapping
     public ResponseEntity<CreateReservationResponse> createReservation(
-            @RequestBody CreateReservationRequest request,
+            @RequestBody @Valid CreateReservationRequest request,
             LoginMember loginMember
     ) {
         CreateReservationResponse response = reservationService.create(request, loginMember);
@@ -55,7 +57,7 @@ public class ReservationController {
 
     @PatchMapping
     public ResponseEntity<UpdateReservationResponse> updateReservation(
-            @RequestBody UpdateReservationRequest request,
+            @RequestBody @Valid UpdateReservationRequest request,
             LoginMember loginMember
     ) {
         UpdateReservationResponse response = reservationService.updateByMember(request,loginMember);
