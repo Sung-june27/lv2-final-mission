@@ -1,6 +1,6 @@
 package finalmission.global.config;
 
-import finalmission.global.error.UnauthorizedException;
+import finalmission.global.error.exception.UnauthorizedException;
 import finalmission.global.util.CookieUtil;
 import finalmission.global.util.JwtUtil;
 import finalmission.member.domain.LoginMember;

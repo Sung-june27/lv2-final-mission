@@ -1,6 +1,6 @@
 package finalmission.member.service;
 
-import finalmission.global.error.BadRequestException;
+import finalmission.global.error.exception.BadRequestException;
 import finalmission.global.util.JwtUtil;
 import finalmission.member.domain.LoginMember;
 import finalmission.member.domain.Member;

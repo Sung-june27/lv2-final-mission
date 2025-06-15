@@ -1,8 +1,8 @@
 package finalmission.reservation.service;
 
 import finalmission.external.HolidayService;
-import finalmission.global.error.BadRequestException;
-import finalmission.global.error.NotFoundException;
+import finalmission.global.error.exception.BadRequestException;
+import finalmission.global.error.exception.NotFoundException;
 import finalmission.member.domain.LoginMember;
 import finalmission.member.domain.Member;
 import finalmission.member.repository.MemberRepository;

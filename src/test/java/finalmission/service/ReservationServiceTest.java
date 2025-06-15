@@ -16,7 +16,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import finalmission.external.HolidayService;
-import finalmission.global.error.BadRequestException;
+import finalmission.global.error.exception.BadRequestException;
 import finalmission.member.domain.Member;
 import finalmission.member.repository.MemberRepository;
 import finalmission.reservation.domain.Reservation;

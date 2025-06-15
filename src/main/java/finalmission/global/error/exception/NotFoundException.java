@@ -1,4 +1,4 @@
-package finalmission.global.error;
+package finalmission.global.error.exception;
 
 public class NotFoundException extends RuntimeException {
     public NotFoundException(String message) {
