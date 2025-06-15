@@ -4,6 +4,7 @@ import static finalmission.TestFixture.CONFERENCE_ROOM;
 import static finalmission.TestFixture.DEFAULT_TIME;
 import static finalmission.TestFixture.LOGIN_MEMBER;
 import static finalmission.TestFixture.MEMBER;
+import static finalmission.TestFixture.OTHER_MEMBER;
 import static finalmission.TestFixture.RESERVATION;
 import static finalmission.TestFixture.TOMORROW;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,7 +18,6 @@ import static org.mockito.Mockito.when;
 
 import finalmission.external.HolidayService;
 import finalmission.global.error.exception.BadRequestException;
-import finalmission.member.domain.Member;
 import finalmission.member.repository.MemberRepository;
 import finalmission.reservation.domain.Reservation;
 import finalmission.reservation.dto.request.CreateReservationRequest;
@@ -220,8 +220,7 @@ class ReservationServiceTest {
                 1L
         );
 
-        Member other = new Member(2L, "다른 사용자", "other@email.com", "password");
-        Reservation reservation = new Reservation(1L, TOMORROW, DEFAULT_TIME, CONFERENCE_ROOM, other);
+        Reservation reservation = new Reservation(1L, TOMORROW, DEFAULT_TIME, CONFERENCE_ROOM, OTHER_MEMBER);
 
         when(reservationRepository.findById(anyLong()))
                 .thenReturn(Optional.of(reservation));
@@ -281,8 +280,7 @@ class ReservationServiceTest {
     @Test
     void deleteByMember_WhenNotMine() {
         // given
-        Member other = new Member(2L, "다른 사용자", "other@email.com", "password");
-        Reservation reservation = new Reservation(1L, TOMORROW, DEFAULT_TIME, CONFERENCE_ROOM, other);
+        Reservation reservation = new Reservation(1L, TOMORROW, DEFAULT_TIME, CONFERENCE_ROOM, OTHER_MEMBER);
 
         when(reservationRepository.findById(anyLong()))
                 .thenReturn(Optional.of(reservation));

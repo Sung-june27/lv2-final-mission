@@ -4,6 +4,7 @@ import finalmission.global.error.exception.UnauthorizedException;
 import finalmission.global.util.CookieUtil;
 import finalmission.global.util.JwtUtil;
 import finalmission.member.domain.LoginMember;
+import finalmission.member.domain.Role;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,7 +48,8 @@ public class AuthenticationArgumentResolver implements HandlerMethodArgumentReso
         Long id = claims.get("id", Long.class);
         String name = claims.get("name", String.class);
         String email = claims.get("email", String.class);
+        Role role = claims.get("role", Role.class);
 
-        return new LoginMember(id, name, email);
+        return new LoginMember(id, name, email, role);
     }
 }

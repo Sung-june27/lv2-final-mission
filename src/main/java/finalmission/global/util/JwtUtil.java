@@ -26,7 +26,8 @@ public class JwtUtil {
                 .setExpiration(validity)
                 .claim("id", loginMember.id())
                 .claim("name", loginMember.name())
-                .claim("role", loginMember.email())
+                .claim("email", loginMember.email())
+                .claim("role", loginMember.role())
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }

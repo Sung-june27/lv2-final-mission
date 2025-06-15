@@ -22,7 +22,7 @@ public class AuthService {
 
         validatePasswordCorrect(request, member);
 
-        LoginMember loginMember = new LoginMember(member.getId(), member.getName(), member.getEmail());
+        LoginMember loginMember = new LoginMember(member.getId(), member.getName(), member.getEmail(), member.getRole());
         return jwtUtil.createToken(loginMember);
     }
 
