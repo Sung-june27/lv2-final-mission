@@ -2,7 +2,6 @@ package finalmission.global.config;
 
 import finalmission.global.error.exception.UnauthorizedException;
 import finalmission.global.util.CookieUtil;
-import finalmission.global.util.JwtUtil;
 import finalmission.member.domain.LoginMember;
 import finalmission.member.domain.Role;
 import io.jsonwebtoken.Claims;
@@ -20,8 +19,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @RequiredArgsConstructor
 public class AuthenticationArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private final CookieUtil cookieUtil;
-    private final JwtUtil jwtUtil;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -38,18 +36,17 @@ public class AuthenticationArgumentResolver implements HandlerMethodArgumentReso
             throw new UnauthorizedException("로그인이 필요합니다.");
         }
 
-        String token = cookieUtil.extractValueFromCookie(cookies, "token");
-        if (token.isEmpty() || !jwtUtil.validateToken(token)) {
+        String token = CookieUtil.extractValueFromCookie(cookies, "token");
+        if (token.isEmpty() || !jwtTokenProvider.validateToken(token)) {
             throw new UnauthorizedException("로그인이 필요합니다.");
         }
 
-        Claims claims = jwtUtil.extractAllClaims(token);
+        Claims claims = jwtTokenProvider.getClaimsFromToken(token);
 
-        Long id = claims.get("id", Long.class);
+        Long id = Long.valueOf(claims.getSubject());
         String name = claims.get("name", String.class);
-        String email = claims.get("email", String.class);
         Role role = claims.get("role", Role.class);
 
-        return new LoginMember(id, name, email, role);
+        return new LoginMember(id, name, role);
     }
 }

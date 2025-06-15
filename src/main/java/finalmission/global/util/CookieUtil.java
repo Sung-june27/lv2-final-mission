@@ -1,28 +1,33 @@
 package finalmission.global.util;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
-import org.springframework.stereotype.Component;
 
-@Component
 public class CookieUtil {
 
-    public Cookie createCookie(String parameter, String value) {
-        Cookie cookie = new Cookie(parameter, value);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        return cookie;
+    private static final int MAX_AGE = 3600;
+
+    private CookieUtil() {
     }
 
-    public Cookie expireCookie(String parameter, String value) {
-        Cookie cookie = new Cookie(parameter, value);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
-        return cookie;
+    public static void addCookie(String name, String value, HttpServletResponse response) {
+        addCookie(name, value, MAX_AGE, response);
     }
 
-    public String extractValueFromCookie(Cookie[] cookies, String name) {
+    public static void addCookie(String name, String value, int maxAge, HttpServletResponse response) {
+        Cookie cookie = new Cookie(name, value);
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(maxAge);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+    }
+
+    public static void expireCookie(String name, HttpServletResponse response) {
+        addCookie(name, null, 0, response);
+    }
+
+    public static String extractValueFromCookie(Cookie[] cookies, String name) {
         if (cookies == null) {
             return "";
         }

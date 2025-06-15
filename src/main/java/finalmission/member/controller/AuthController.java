@@ -3,7 +3,6 @@ package finalmission.member.controller;
 import finalmission.global.util.CookieUtil;
 import finalmission.member.dto.request.LoginRequest;
 import finalmission.member.service.AuthService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
-    private final CookieUtil cookieUtil;
 
     @PostMapping("/login")
     public ResponseEntity<Void> login(
@@ -26,8 +24,7 @@ public class AuthController {
             HttpServletResponse response
     ) {
         String token = authService.login(request);
-        Cookie cookie = cookieUtil.createCookie("token", token);
-        response.addCookie(cookie);
+        CookieUtil.addCookie("token", token, response);
         return ResponseEntity.ok().build();
     }
 
@@ -35,8 +32,7 @@ public class AuthController {
     public ResponseEntity<Void> logout(
             HttpServletResponse response
     ) {
-        Cookie cookie = cookieUtil.expireCookie("token", "");
-        response.addCookie(cookie);
+        CookieUtil.expireCookie("token", response);
         return ResponseEntity.ok().build();
     }
 }
