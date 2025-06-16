@@ -50,12 +50,8 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            return !Jwts.parser()
-                    .setSigningKey(SECRET_KEY)
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .getExpiration()
-                    .before(new Date());
+            Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token);
+            return true;
         } catch (Exception e) {
             return false;
         }

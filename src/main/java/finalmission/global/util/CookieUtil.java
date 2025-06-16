@@ -36,6 +36,6 @@ public class CookieUtil {
                 .filter(cookie -> name.equals(cookie.getName()))
                 .map(Cookie::getValue)
                 .findFirst()
-                .orElseGet(() -> "");
+                .orElse("");
     }
 }
