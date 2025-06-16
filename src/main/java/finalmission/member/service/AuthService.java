@@ -2,9 +2,12 @@ package finalmission.member.service;
 
 import finalmission.global.config.JwtTokenProvider;
 import finalmission.global.error.exception.BadRequestException;
+import finalmission.member.domain.LoginMember;
 import finalmission.member.domain.Member;
+import finalmission.member.domain.Role;
 import finalmission.member.dto.request.LoginRequest;
 import finalmission.member.repository.MemberRepository;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,5 +35,15 @@ public class AuthService {
     private Member getMemberByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new BadRequestException("이메일 또는 비밀번호가 일치하지 않습니다."));
+    }
+
+    public LoginMember getLoginMemberByToken(String token) {
+        Claims claims = jwtTokenProvider.getClaimsFromToken(token);
+
+        Long userId = Long.valueOf(claims.getSubject());
+        String name = claims.get("name", String.class);
+        Role role = Role.valueOf(claims.get("role", String.class));
+
+        return new LoginMember(userId, name, role);
     }
 }

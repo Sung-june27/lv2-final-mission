@@ -1,11 +1,13 @@
 package finalmission.global.error.handler;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 import finalmission.global.error.dto.ErrorResponse;
 import finalmission.global.error.exception.BadRequestException;
+import finalmission.global.error.exception.ForbiddenException;
 import finalmission.global.error.exception.NotFoundException;
 import finalmission.global.error.exception.UnauthorizedException;
 import org.springframework.http.ResponseEntity;
@@ -34,5 +36,12 @@ public class GlobalExceptionHandler {
         ErrorResponse response = ErrorResponse.from(e.getMessage());
 
         return ResponseEntity.status(UNAUTHORIZED).body(response);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorizedException(ForbiddenException e) {
+        ErrorResponse response = ErrorResponse.from(e.getMessage());
+
+        return ResponseEntity.status(FORBIDDEN).body(response);
     }
 }

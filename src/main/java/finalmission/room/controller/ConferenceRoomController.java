@@ -1,5 +1,7 @@
 package finalmission.room.controller;
 
+import finalmission.global.config.CheckRole;
+import finalmission.member.domain.Role;
 import finalmission.room.dto.request.CreateRoomRequest;
 import finalmission.room.dto.response.CreateRoomResponse;
 import finalmission.room.service.ConferenceRoomService;
@@ -18,6 +20,7 @@ public class ConferenceRoomController {
     private final ConferenceRoomService conferenceRoomService;
 
     @PostMapping
+    @CheckRole(Role.ADMIN)
     public ResponseEntity<CreateRoomResponse> createConferenceRoom(
             @RequestBody CreateRoomRequest request
     ) {
