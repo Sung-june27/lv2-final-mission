@@ -1,5 +1,7 @@
 package finalmission.global.config;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import finalmission.external.HolidayRestClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -16,10 +18,14 @@ public class RestClientConfig {
 
     @Bean
     public HolidayRestClient holidayRestClient() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
         return new HolidayRestClient(
                 restClientBuilder().build(),
                 holidayProperties.baseUrl(),
-                holidayProperties.serviceKey()
+                holidayProperties.serviceKey(),
+                objectMapper
         );
     }
 
