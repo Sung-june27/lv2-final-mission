@@ -5,7 +5,7 @@ import finalmission.global.error.exception.BadRequestException;
 import finalmission.global.error.exception.NotFoundException;
 import finalmission.member.domain.LoginMember;
 import finalmission.member.domain.Member;
-import finalmission.member.repository.MemberRepository;
+import finalmission.member.service.MemberService;
 import finalmission.reservation.domain.Reservation;
 import finalmission.reservation.dto.request.CreateReservationRequest;
 import finalmission.reservation.dto.request.UpdateReservationRequest;
@@ -15,27 +15,29 @@ import finalmission.reservation.dto.response.ReservationByMemberResponse;
 import finalmission.reservation.dto.response.UpdateReservationResponse;
 import finalmission.reservation.repository.ReservationRepository;
 import finalmission.room.domain.ConferenceRoom;
-import finalmission.room.repository.ConferenceRoomRepository;
+import finalmission.room.service.ConferenceRoomService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ReservationService {
 
     private final HolidayService holidayService;
+    private final MemberService memberService;
+    private final ConferenceRoomService conferenceRoomService;
 
     private final ReservationRepository reservationRepository;
-    private final ConferenceRoomRepository conferenceRoomRepository;
-    private final MemberRepository memberRepository;
 
     public CreateReservationResponse create(CreateReservationRequest request, LoginMember loginMember) {
-        ConferenceRoom conferenceRoom = getConferenceRoomById(request.conferenceRoomId());
-        Member member = getMemberById(loginMember.id());
+        ConferenceRoom conferenceRoom = conferenceRoomService.getById(request.conferenceRoomId());
+        Member member = memberService.getById(loginMember.id());
 
         validateHoliday(request.date());
         validatePastDateTime(request.date(), request.time());
@@ -47,6 +49,7 @@ public class ReservationService {
         return CreateReservationResponse.from(saved);
     }
 
+    @Transactional(readOnly = true)
     public List<ReadReservationResponse> findALl() {
         List<Reservation> reservations = reservationRepository.findAll();
         return reservations.stream()
@@ -54,6 +57,7 @@ public class ReservationService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<ReservationByMemberResponse> findAllByMember(LoginMember loginMember) {
         List<Reservation> reservations = reservationRepository.findAllByMemberId(loginMember.id());
         return reservations.stream()
@@ -63,8 +67,8 @@ public class ReservationService {
 
     public UpdateReservationResponse updateByMember(UpdateReservationRequest request, LoginMember loginMember) {
         Reservation reservation = getReservationById(request.id());
-        ConferenceRoom conferenceRoom = getConferenceRoomById(request.conferenceRoomId());
-        Member member = getMemberById(loginMember.id());
+        ConferenceRoom conferenceRoom = conferenceRoomService.getById(request.conferenceRoomId());
+        Member member = memberService.getById(loginMember.id());
 
         validateHoliday(request.date());
         validateByMember(reservation, member);
@@ -75,7 +79,7 @@ public class ReservationService {
 
     public void deleteByMember(Long reservationId, LoginMember loginMember) {
         Reservation reservation = getReservationById(reservationId);
-        Member member = getMemberById(loginMember.id());
+        Member member = memberService.getById(loginMember.id());
         validateByMember(reservation, member);
         reservationRepository.delete(reservation);
     }
@@ -111,15 +115,5 @@ public class ReservationService {
     private Reservation getReservationById(Long reservationId) {
         return reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new NotFoundException("예약을 찾을 수 없습니다."));
-    }
-
-    private ConferenceRoom getConferenceRoomById(Long conferenceRoomId) {
-        return conferenceRoomRepository.findById(conferenceRoomId)
-                .orElseThrow(() -> new NotFoundException("회의실을 찾을 수 없습니다."));
-    }
-
-    private Member getMemberById(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new NotFoundException("멤버를 찾을 수 없습니다."));
     }
 }

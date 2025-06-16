@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 
 import finalmission.external.HolidayService;
 import finalmission.global.error.exception.BadRequestException;
-import finalmission.member.repository.MemberRepository;
+import finalmission.member.service.MemberService;
 import finalmission.reservation.domain.Reservation;
 import finalmission.reservation.dto.request.CreateReservationRequest;
 import finalmission.reservation.dto.request.UpdateReservationRequest;
@@ -27,7 +27,7 @@ import finalmission.reservation.dto.response.ReservationByMemberResponse;
 import finalmission.reservation.dto.response.UpdateReservationResponse;
 import finalmission.reservation.repository.ReservationRepository;
 import finalmission.reservation.service.ReservationService;
-import finalmission.room.repository.ConferenceRoomRepository;
+import finalmission.room.service.ConferenceRoomService;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -51,13 +51,13 @@ class ReservationServiceTest {
     private HolidayService holidayService;
 
     @Mock
+    private ConferenceRoomService conferenceRoomService;
+
+    @Mock
+    private MemberService memberService;
+
+    @Mock
     private ReservationRepository reservationRepository;
-
-    @Mock
-    private ConferenceRoomRepository conferenceRoomRepository;
-
-    @Mock
-    private MemberRepository memberRepository;
 
     @DisplayName("예약을 추가한다.")
     @Test
@@ -68,10 +68,10 @@ class ReservationServiceTest {
                 DEFAULT_TIME,
                 1L
         );
-        when(memberRepository.findById(anyLong()))
-                .thenReturn(Optional.of(MEMBER));
-        when(conferenceRoomRepository.findById(anyLong()))
-                .thenReturn(Optional.of(CONFERENCE_ROOM));
+        when(memberService.getById(anyLong()))
+                .thenReturn(MEMBER);
+        when(conferenceRoomService.getById(anyLong()))
+                .thenReturn(CONFERENCE_ROOM);
         when(reservationRepository.save(any(Reservation.class)))
                 .thenReturn(RESERVATION);
 
@@ -98,10 +98,10 @@ class ReservationServiceTest {
                 DEFAULT_TIME,
                 1L
         );
-        when(memberRepository.findById(anyLong()))
-                .thenReturn(Optional.of(MEMBER));
-        when(conferenceRoomRepository.findById(anyLong()))
-                .thenReturn(Optional.of(CONFERENCE_ROOM));
+        when(memberService.getById(anyLong()))
+                .thenReturn(MEMBER);
+        when(conferenceRoomService.getById(anyLong()))
+                .thenReturn(CONFERENCE_ROOM);
         when(reservationRepository.existsByDateAndTimeAndConferenceRoom(any(), any(), any()))
                 .thenReturn(true);
 
@@ -119,10 +119,10 @@ class ReservationServiceTest {
                 DEFAULT_TIME,
                 1L
         );
-        when(memberRepository.findById(anyLong()))
-                .thenReturn(Optional.of(MEMBER));
-        when(conferenceRoomRepository.findById(anyLong()))
-                .thenReturn(Optional.of(CONFERENCE_ROOM));
+        when(memberService.getById(anyLong()))
+                .thenReturn(MEMBER);
+        when(conferenceRoomService.getById(anyLong()))
+                .thenReturn(CONFERENCE_ROOM);
         when(holidayService.isHoliday(any()))
                 .thenReturn(true);
 
@@ -139,10 +139,10 @@ class ReservationServiceTest {
                 DEFAULT_TIME,
                 1L
         );
-        when(memberRepository.findById(anyLong()))
-                .thenReturn(Optional.of(MEMBER));
-        when(conferenceRoomRepository.findById(anyLong()))
-                .thenReturn(Optional.of(CONFERENCE_ROOM));
+        when(memberService.getById(anyLong()))
+                .thenReturn(MEMBER);
+        when(conferenceRoomService.getById(anyLong()))
+                .thenReturn(CONFERENCE_ROOM);
 
         // when & then
         assertThatThrownBy(() -> reservationService.create(request, LOGIN_MEMBER))
@@ -194,10 +194,10 @@ class ReservationServiceTest {
 
         when(reservationRepository.findById(anyLong()))
                 .thenReturn(Optional.of(reservation));
-        when(conferenceRoomRepository.findById(anyLong()))
-                .thenReturn(Optional.of(CONFERENCE_ROOM));
-        when(memberRepository.findById(anyLong()))
-                .thenReturn(Optional.of(MEMBER));
+        when(memberService.getById(anyLong()))
+                .thenReturn(MEMBER);
+        when(conferenceRoomService.getById(anyLong()))
+                .thenReturn(CONFERENCE_ROOM);
 
         // when
         UpdateReservationResponse response = reservationService.updateByMember(request, LOGIN_MEMBER);
@@ -224,10 +224,10 @@ class ReservationServiceTest {
 
         when(reservationRepository.findById(anyLong()))
                 .thenReturn(Optional.of(reservation));
-        when(conferenceRoomRepository.findById(anyLong()))
-                .thenReturn(Optional.of(CONFERENCE_ROOM));
-        when(memberRepository.findById(anyLong()))
-                .thenReturn(Optional.of(MEMBER));
+        when(memberService.getById(anyLong()))
+                .thenReturn(MEMBER);
+        when(conferenceRoomService.getById(anyLong()))
+                .thenReturn(CONFERENCE_ROOM);
 
         // when & then
         assertThatThrownBy(() -> reservationService.updateByMember(request, LOGIN_MEMBER))
@@ -248,10 +248,10 @@ class ReservationServiceTest {
 
         when(reservationRepository.findById(anyLong()))
                 .thenReturn(Optional.of(reservation));
-        when(conferenceRoomRepository.findById(anyLong()))
-                .thenReturn(Optional.of(CONFERENCE_ROOM));
-        when(memberRepository.findById(anyLong()))
-                .thenReturn(Optional.of(MEMBER));
+        when(memberService.getById(anyLong()))
+                .thenReturn(MEMBER);
+        when(conferenceRoomService.getById(anyLong()))
+                .thenReturn(CONFERENCE_ROOM);
         when(holidayService.isHoliday(any()))
                 .thenReturn(true);
 
@@ -266,8 +266,8 @@ class ReservationServiceTest {
         // given
         when(reservationRepository.findById(anyLong()))
                 .thenReturn(Optional.of(RESERVATION));
-        when(memberRepository.findById(anyLong()))
-                .thenReturn(Optional.of(MEMBER));
+        when(memberService.getById(anyLong()))
+                .thenReturn(MEMBER);
 
         // when & then
         assertThatCode(() -> reservationService.deleteByMember(1L, LOGIN_MEMBER))
@@ -284,8 +284,8 @@ class ReservationServiceTest {
 
         when(reservationRepository.findById(anyLong()))
                 .thenReturn(Optional.of(reservation));
-        when(memberRepository.findById(anyLong()))
-                .thenReturn(Optional.of(MEMBER));
+        when(memberService.getById(anyLong()))
+                .thenReturn(MEMBER);
 
         // when & then
         assertThatThrownBy(() -> reservationService.deleteByMember(1L, LOGIN_MEMBER))
