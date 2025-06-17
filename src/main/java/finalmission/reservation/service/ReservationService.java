@@ -65,8 +65,8 @@ public class ReservationService {
                 .toList();
     }
 
-    public UpdateReservationResponse updateByMember(UpdateReservationRequest request, LoginMember loginMember) {
-        Reservation reservation = getReservationById(request.id());
+    public UpdateReservationResponse updateByMember(Long reservationId, UpdateReservationRequest request, LoginMember loginMember) {
+        Reservation reservation = getReservationById(reservationId);
         ConferenceRoom conferenceRoom = conferenceRoomService.getById(request.conferenceRoomId());
         Member member = memberService.getById(loginMember.id());
 

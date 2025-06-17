@@ -1,4 +1,4 @@
-package finalmission;
+package finalmission.helper;
 
 import static finalmission.member.domain.Role.USER;
 
@@ -18,6 +18,6 @@ public class TestFixture {
     public static final Member MEMBER = new Member("사용자", "user@email.com", "password", USER);
     public static final Member ADMIN = new Member("관리자", "admin@email.com", "password", Role.ADMIN);
     public static final Member OTHER_MEMBER = new Member(2L, "다른 사용자", "other@email.com", "password", Role.USER);
-    public static final ConferenceRoom CONFERENCE_ROOM = new ConferenceRoom(1L, "회의실 1");
+    public static final ConferenceRoom CONFERENCE_ROOM = new ConferenceRoom("회의실 1");
     public static final Reservation RESERVATION = new Reservation(1L, TOMORROW, DEFAULT_TIME, CONFERENCE_ROOM, MEMBER);
 }

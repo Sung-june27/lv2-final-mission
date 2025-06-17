@@ -1,10 +1,10 @@
 package finalmission.controller;
 
-import static finalmission.TestFixture.ADMIN;
-import static finalmission.TestFixture.MEMBER;
+import static finalmission.helper.TestFixture.ADMIN;
+import static finalmission.helper.TestFixture.MEMBER;
 import static org.hamcrest.Matchers.equalTo;
 
-import finalmission.TestHelper;
+import finalmission.helper.TestHelper;
 import finalmission.member.repository.MemberRepository;
 import finalmission.room.dto.request.CreateRoomRequest;
 import io.restassured.RestAssured;

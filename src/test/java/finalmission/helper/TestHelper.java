@@ -1,4 +1,4 @@
-package finalmission;
+package finalmission.helper;
 
 import finalmission.member.dto.request.LoginRequest;
 import io.restassured.RestAssured;

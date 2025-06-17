@@ -1,12 +1,12 @@
 package finalmission.service;
 
-import static finalmission.TestFixture.CONFERENCE_ROOM;
-import static finalmission.TestFixture.DEFAULT_TIME;
-import static finalmission.TestFixture.LOGIN_MEMBER;
-import static finalmission.TestFixture.MEMBER;
-import static finalmission.TestFixture.OTHER_MEMBER;
-import static finalmission.TestFixture.RESERVATION;
-import static finalmission.TestFixture.TOMORROW;
+import static finalmission.helper.TestFixture.CONFERENCE_ROOM;
+import static finalmission.helper.TestFixture.DEFAULT_TIME;
+import static finalmission.helper.TestFixture.LOGIN_MEMBER;
+import static finalmission.helper.TestFixture.MEMBER;
+import static finalmission.helper.TestFixture.OTHER_MEMBER;
+import static finalmission.helper.TestFixture.RESERVATION;
+import static finalmission.helper.TestFixture.TOMORROW;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -185,7 +185,6 @@ class ReservationServiceTest {
     void updateByMember() {
         // given
         UpdateReservationRequest request = new UpdateReservationRequest(
-                1L,
                 TOMORROW.plusDays(1),
                 LocalTime.of(11, 0),
                 1L
@@ -200,7 +199,7 @@ class ReservationServiceTest {
                 .thenReturn(CONFERENCE_ROOM);
 
         // when
-        UpdateReservationResponse response = reservationService.updateByMember(request, LOGIN_MEMBER);
+        UpdateReservationResponse response = reservationService.updateByMember(1L, request, LOGIN_MEMBER);
 
         // then
         assertAll(
@@ -214,7 +213,6 @@ class ReservationServiceTest {
     void updateByMember_WhenNotMine() {
         // given
         UpdateReservationRequest request = new UpdateReservationRequest(
-                1L,
                 TOMORROW.plusDays(1),
                 LocalTime.of(11, 0),
                 1L
@@ -230,7 +228,7 @@ class ReservationServiceTest {
                 .thenReturn(CONFERENCE_ROOM);
 
         // when & then
-        assertThatThrownBy(() -> reservationService.updateByMember(request, LOGIN_MEMBER))
+        assertThatThrownBy(() -> reservationService.updateByMember(1L, request, LOGIN_MEMBER))
                 .isInstanceOf(BadRequestException.class);
     }
 
@@ -239,7 +237,6 @@ class ReservationServiceTest {
     void updateByMember_WhenHoliday() {
         // given
         UpdateReservationRequest request = new UpdateReservationRequest(
-                1L,
                 LocalDate.of(2020, 6, 6),
                 LocalTime.of(11, 0),
                 1L
@@ -256,7 +253,7 @@ class ReservationServiceTest {
                 .thenReturn(true);
 
         // when & then
-        assertThatThrownBy(() -> reservationService.updateByMember(request, LOGIN_MEMBER))
+        assertThatThrownBy(() -> reservationService.updateByMember(1L, request, LOGIN_MEMBER))
                 .isInstanceOf(BadRequestException.class);
     }
 

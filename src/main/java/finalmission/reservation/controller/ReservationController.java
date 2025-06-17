@@ -55,12 +55,13 @@ public class ReservationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PatchMapping
+    @PatchMapping("/{id}")
     public ResponseEntity<UpdateReservationResponse> updateReservation(
             @RequestBody @Valid UpdateReservationRequest request,
+            @PathVariable Long id,
             LoginMember loginMember
     ) {
-        UpdateReservationResponse response = reservationService.updateByMember(request,loginMember);
+        UpdateReservationResponse response = reservationService.updateByMember(id, request, loginMember);
 
         return ResponseEntity.ok(response);
     }
