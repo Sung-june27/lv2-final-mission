@@ -3,10 +3,12 @@ package finalmission.room.service;
 import finalmission.global.error.exception.BadRequestException;
 import finalmission.global.error.exception.NotFoundException;
 import finalmission.reservation.repository.ReservationRepository;
+import finalmission.room.controller.ReadRoomResponse;
 import finalmission.room.domain.ConferenceRoom;
 import finalmission.room.dto.request.CreateRoomRequest;
 import finalmission.room.dto.response.CreateRoomResponse;
 import finalmission.room.repository.ConferenceRoomRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,5 +39,12 @@ public class ConferenceRoomService {
             throw new BadRequestException("예약이 있는 회의실은 삭제할 수 없습니다.");
         }
         conferenceRoomRepository.deleteById(id);
+    }
+
+    public List<ReadRoomResponse> findAll() {
+        List<ConferenceRoom> conferenceRooms = conferenceRoomRepository.findAll();
+        return conferenceRooms.stream()
+                .map(ReadRoomResponse::from)
+                .toList();
     }
 }
