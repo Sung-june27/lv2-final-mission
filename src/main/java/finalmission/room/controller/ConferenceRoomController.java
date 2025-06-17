@@ -7,6 +7,8 @@ import finalmission.room.dto.response.CreateRoomResponse;
 import finalmission.room.service.ConferenceRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,5 +29,13 @@ public class ConferenceRoomController {
         CreateRoomResponse response = conferenceRoomService.create(request);
 
         return ResponseEntity.ok().body(response);
+    }
+
+    @DeleteMapping("/{id}")
+    @CheckRole(Role.ADMIN)
+    public ResponseEntity<Void> deleteConferenceRoomById(@PathVariable Long id) {
+        conferenceRoomService.deleteById(id);
+
+        return ResponseEntity.noContent().build();
     }
 }

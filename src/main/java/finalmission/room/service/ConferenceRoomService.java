@@ -1,6 +1,8 @@
 package finalmission.room.service;
 
+import finalmission.global.error.exception.BadRequestException;
 import finalmission.global.error.exception.NotFoundException;
+import finalmission.reservation.repository.ReservationRepository;
 import finalmission.room.domain.ConferenceRoom;
 import finalmission.room.dto.request.CreateRoomRequest;
 import finalmission.room.dto.response.CreateRoomResponse;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ConferenceRoomService {
 
     private final ConferenceRoomRepository conferenceRoomRepository;
+    private final ReservationRepository reservationRepository;
 
     @Transactional(readOnly = true)
     public ConferenceRoom getById(Long conferenceRoomId) {
@@ -27,5 +30,12 @@ public class ConferenceRoomService {
         ConferenceRoom saved = conferenceRoomRepository.save(conferenceRoom);
 
         return CreateRoomResponse.from(saved);
+    }
+
+    public void deleteById(Long id) {
+        if (reservationRepository.existsByConferenceRoomId(id)) {
+            throw new BadRequestException("예약이 있는 회의실은 삭제할 수 없습니다.");
+        }
+        conferenceRoomRepository.deleteById(id);
     }
 }

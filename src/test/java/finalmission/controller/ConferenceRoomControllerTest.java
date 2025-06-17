@@ -1,12 +1,16 @@
 package finalmission.controller;
 
-import static finalmission.helper.TestFixture.ADMIN;
-import static finalmission.helper.TestFixture.MEMBER;
+import static finalmission.member.domain.Role.USER;
 import static org.hamcrest.Matchers.equalTo;
 
 import finalmission.helper.TestHelper;
+import finalmission.member.domain.Member;
+import finalmission.member.domain.Role;
 import finalmission.member.repository.MemberRepository;
+import finalmission.reservation.repository.ReservationRepository;
+import finalmission.room.domain.ConferenceRoom;
 import finalmission.room.dto.request.CreateRoomRequest;
+import finalmission.room.repository.ConferenceRoomRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,9 +29,18 @@ public class ConferenceRoomControllerTest {
 
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private ConferenceRoomRepository conferenceRoomRepository;
+    @Autowired
+    private ReservationRepository reservationRepository;
+
+    private Member member;
+    private Member admin;
+    private ConferenceRoom conferenceRoom;
 
     @BeforeEach
     public void setup() {
+        initData();
         RestAssured.port = port;
     }
 
@@ -35,8 +48,7 @@ public class ConferenceRoomControllerTest {
     @Test
     void createConferenceRoom() {
         // given
-        memberRepository.save(ADMIN);
-        String token = TestHelper.login(ADMIN.getEmail(), ADMIN.getPassword());
+        String token = TestHelper.login(admin.getEmail(), admin.getPassword());
 
         CreateRoomRequest request = new CreateRoomRequest("회의실");
 
@@ -56,8 +68,7 @@ public class ConferenceRoomControllerTest {
     @Test
     void createConferenceRoom_WhenNotAdmin() {
         // given
-        memberRepository.save(MEMBER);
-        String token = TestHelper.login(MEMBER.getEmail(), MEMBER.getPassword());
+        String token = TestHelper.login(member.getEmail(), member.getPassword());
 
         // when & then
         RestAssured.given()
@@ -66,5 +77,48 @@ public class ConferenceRoomControllerTest {
                 .post("/room")
                 .then()
                 .statusCode(HttpStatus.FORBIDDEN.value());
+    }
+
+    @DisplayName("회의실을 삭제할 수 있다.")
+    @Test
+    void deleteConferenceRoomByIdById() {
+        // given
+        String token = TestHelper.login(admin.getEmail(), admin.getPassword());
+
+        // when & then
+        RestAssured.given()
+                .cookie("token", token)
+                .when()
+                .delete("/room/" + conferenceRoom.getId())
+                .then()
+                .statusCode(HttpStatus.NO_CONTENT.value());
+    }
+
+    @DisplayName("어드민이 아니라면, 회의실을 삭제할 수 없다.")
+    @Test
+    void deleteConferenceRoomByIdById_WhenNotAdmin() {
+        // given
+        String token = TestHelper.login(member.getEmail(), member.getPassword());
+
+        // when & then
+        RestAssured.given()
+                .cookie("token", token)
+                .when()
+                .delete("/room/" + conferenceRoom.getId())
+                .then()
+                .statusCode(HttpStatus.FORBIDDEN.value());
+    }
+
+    private void initData() {
+        reservationRepository.deleteAll();
+        memberRepository.deleteAll();
+        conferenceRoomRepository.deleteAll();
+
+        Member beforeSaveMember = new Member("사용자", "user@email.com", "password", USER);
+        member = memberRepository.save(beforeSaveMember);
+        Member beforeSaveAdmin =  new Member("관리자", "admin@email.com", "password", Role.ADMIN);
+        admin = memberRepository.save(beforeSaveAdmin);
+        ConferenceRoom beforeSaveRoom = new ConferenceRoom("회의실");
+        conferenceRoom = conferenceRoomRepository.save(beforeSaveRoom);
     }
 }
